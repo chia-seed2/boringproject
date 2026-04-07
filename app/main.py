@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.db import Base, engine
 from app.jobs.daily_scan import run_daily_scan
 from app.routes import compliance, export, price_snapshots, products, scan, stores
-
+from datetime import datetime, timezone
 scheduler = BackgroundScheduler()
 
 
@@ -44,7 +44,17 @@ app.include_router(price_snapshots.router)
 app.include_router(scan.router)
 app.include_router(compliance.router)
 
+@app.get("/jobs/next-scan")
+def get_next_scan():
+    job = scheduler.get_job("daily_scan")
+    next_run = job.next_run_time if job else None
 
+    return {
+        "job_id": "daily_scan",
+        "next_run_time": next_run.astimezone(timezone.utc).isoformat() if next_run else None,
+        "server_time": datetime.now(timezone.utc).isoformat(),
+    }
+    
 @app.get("/")
 def root():
     return {"message": "ScanGuard backend is running"}
