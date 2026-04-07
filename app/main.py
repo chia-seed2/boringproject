@@ -1,12 +1,12 @@
 from contextlib import asynccontextmanager
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.db import Base, engine
 from app.jobs.daily_scan import run_daily_scan
-from app.routes import stores, products, price_snapshots, scan, compliance, export
+from app.routes import compliance, export, price_snapshots, products, scan, stores
 
 scheduler = BackgroundScheduler()
 
@@ -31,13 +31,8 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:5174",
-        "http://127.0.0.1:5174",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
