@@ -13,7 +13,7 @@ from app.jobs.daily_scan import run_daily_scan
 from app.routes import export
 from app.routes import stores, products, price_snapshots, scan, compliance, export
 scheduler = BackgroundScheduler()
-
+from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -33,6 +33,15 @@ app.include_router(products.router)
 app.include_router(price_snapshots.router)
 app.include_router(scan.router)
 app.include_router(compliance.router)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5174", "http://127.0.0.1:5174"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 
 @app.get("/")
 def root():
