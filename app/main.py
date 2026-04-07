@@ -72,3 +72,14 @@ def run_daily_scan_now():
         "status": "daily scan completed",
         "summary": result,
     }
+
+@app.get("/jobs/debug")
+def debug_jobs():
+    jobs = scheduler.get_jobs()
+    return [
+        {
+            "id": job.id,
+            "next_run_time": job.next_run_time.isoformat() if job.next_run_time else None,
+        }
+        for job in jobs
+    ]
