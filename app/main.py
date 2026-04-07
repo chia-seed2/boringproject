@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from apscheduler.schedulers.background import BackgroundScheduler
-
+from fastapi.middleware.cors import CORSMiddleware
 from app.db import Base, engine
 from app.models.store import Store
 from app.models.product import Product
